@@ -1,5 +1,5 @@
 import { Agent } from "./Agent";
 
-export type AgentAdd = Omit<Agent, "id" | "role" > & {
+export type AgentUpdate = Omit<Agent, "role" > & {
   roleID: string;  
 };

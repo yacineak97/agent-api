@@ -1,5 +1,7 @@
+import { Permission } from "./Permission";
+
 export interface Role {
-  id: String
-  name: String
-  permission: Array<number>
+  id: string
+  name: string
+  permissions: Array<Permission>
 }

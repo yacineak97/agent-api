@@ -28,24 +28,38 @@ exports.resolvers = {
                             throw new Error("Role not found");
                         }
                         const role = roleResult.rows[0];
+                        const permissions = [];
+                        for (const permissionId of role.permission) {
+                            const permissionResult = yield postgresql_1.postgresPool.query("SELECT * FROM permissions WHERE (id=$1)", [
+                                permissionId,
+                            ]);
+                            if (permissionResult.rowCount !== 1) {
+                                throw new Error("Permission not found");
+                            }
+                            const permission = permissionResult.rows[0];
+                            permissions.push({
+                                id: permission.id,
+                                name: permission.title,
+                                description: permission.value
+                            });
+                        }
                         roles.set(agent.role, {
                             id: role.id,
-                            name: role.name,
-                            permission: role.permission,
+                            name: role.title,
+                            permissions,
                         });
                     }
-                    const role_type = roles.get(agent.role_type);
+                    const role = roles.get(agent.role);
                     agents.push({
                         id: agent.id,
                         username: agent.username,
-                        first_name: agent.first_name,
-                        last_name: agent.last_name,
+                        firstname: agent.firstname,
+                        lastname: agent.lastname,
                         email: agent.email,
                         avatar: agent.avatar,
                         phone: agent.phone,
-                        password: agent.password,
                         brief: agent.brief,
-                        role_type,
+                        role,
                     });
                 }
                 catch (e) {
@@ -59,27 +73,40 @@ exports.resolvers = {
             const agentResult = yield postgresql_1.postgresPool.query(`SELECT * FROM agents WHERE (account_id=${accountID} AND id=${agentID})`);
             if (agentResult.rowCount === 1) {
                 const agent = agentResult.rows[0];
-                let role_type = void 0;
-                if (agent.role) {
-                    const roleResult = yield postgresql_1.postgresPool.query("SELECT * FROM roles WHERE (id=$1)", [
-                        agent.role,
+                const roleResult = yield postgresql_1.postgresPool.query("SELECT * FROM roles WHERE (id=$1)", [agent.role,]);
+                if (roleResult.rowCount !== 1) {
+                    throw new Error("Rule not found");
+                }
+                const role = roleResult.rows[0];
+                const permissions = [];
+                for (const permissionId of role.permission) {
+                    const permissionResult = yield postgresql_1.postgresPool.query("SELECT * FROM permissions WHERE (id=$1)", [
+                        permissionId,
                     ]);
-                    if (roleResult.rowCount !== 1) {
-                        throw new Error("Rule not found");
+                    if (permissionResult.rowCount !== 1) {
+                        throw new Error("Permission not found");
                     }
-                    role_type = roleResult.rows[0];
+                    const permission = permissionResult.rows[0];
+                    permissions.push({
+                        id: permission.id,
+                        name: permission.title,
+                        description: permission.value
+                    });
                 }
                 return {
                     id: agent.id,
                     username: agent.username,
-                    first_name: agent.first_name,
-                    last_name: agent.last_name,
+                    firstname: agent.firstname,
+                    lastname: agent.lastname,
                     email: agent.email,
                     avatar: agent.avatar,
                     phone: agent.phone,
-                    password: agent.password,
                     brief: agent.brief,
-                    role_type
+                    role: {
+                        id: role.id,
+                        name: role.title,
+                        permissions
+                    }
                 };
             }
             else {
@@ -88,7 +115,7 @@ exports.resolvers = {
         }),
     },
     Mutation: {
-        // Products
+        // Agents
         deleteAgent: (_, args) => __awaiter(void 0, void 0, void 0, function* () {
             const { accountID, agentID } = args;
             const deleteResult = yield postgresql_1.postgresPool.query(`DELETE FROM agents WHERE (account_id=${accountID} AND id=$1)`, [
@@ -129,37 +156,38 @@ exports.resolvers = {
         }),
         addAgent: (_, args) => __awaiter(void 0, void 0, void 0, function* () {
             const { accountID, agent } = args;
-            const { username, first_name, last_name, email, avatar, phone, brief, password, roleID } = agent;
+            const { username, firstname, lastname, email, avatar, phone, brief, password, roleID } = agent;
             const addResult = yield postgresql_1.postgresPool.query(`
-      INSERT INTO agents(username, first_name, last_name, email, avatar, phone, brief, password, role, account_id) 
+      INSERT INTO agents(username, first_name, last_name, email, 
+        avatar, phone, brief, password, role, account_id) 
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id;
       `, [
                 username,
-                first_name,
-                last_name,
+                firstname,
+                lastname,
                 email,
                 avatar,
                 phone,
                 brief || "N/A",
                 password,
-                roleID || null,
+                roleID,
                 accountID,
             ]);
-            return (yield exports.resolvers.Query.agent(null, { agentID: addResult.rows[0].id, accountID }));
+            const agentID = addResult.rows[0].id;
+            return (yield exports.resolvers.Query.agent(null, { agentID, accountID }));
         }),
         alterAgent: (_, args) => __awaiter(void 0, void 0, void 0, function* () {
             const { accountID, agent } = args;
-            const { id, username, first_name, last_name, email, avatar, phone, brief, password, roleID } = agent;
+            const { id, username, firstname, lastname, email, avatar, phone, brief, password, roleID } = agent;
             // We will use the transaction in this case
             const updateResult = yield postgresql_1.postgresPool.query(`
       BEGIN;
       /* Update the agent */
       UPDATE agents SET username=$1 first_name=$2 
       last_name=$3 email=$4 avatar=$5 phone=$6 password=$7 brief=$8 role=$9
-      WHERE (account_id=$10 AND id=$11)
+      WHERE (account_id=$10 AND id=$11)      
       
-      
-      COMMIT;`, [username, first_name, last_name, email, avatar, phone, brief, password, roleID, accountID, id]);
+      COMMIT;`, [username, firstname, lastname, email, avatar, phone, brief, password, roleID, accountID, id]);
             if (updateResult.rowCount > 0) {
                 return { completed: true };
             }

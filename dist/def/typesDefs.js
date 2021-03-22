@@ -10,29 +10,35 @@ exports.agentAPIDef = apollo_server_1.gql `
 
   type Mutation {
     # Agents mutations
-    deleteAgent(accountID: String!, agentID: String!): Boolean!
-    deleteAgents(accountID: String!, agantsID: [String!]!): OperationStatus!
-    alterAgent(accountID: String!, agent: AgentUpdate!): Boolean!
+    deleteAgent(accountID: String!, agentID: String!): OperationStatus!
+    deleteAgents(accountID: String!, agentsID: [String!]!): OperationStatus!
+    alterAgent(accountID: String!, agent: AgentUpdate!): OperationStatus!
     addAgent(accountID: String!, agent: AddAgent!): Agent!
   }
 
   type Agent {
     id: String!
     username: String!
-    first_name: String!
-    last_name: String!
+    firstname: String!
+    lastname: String!
     email: String!
     avatar: String!
     phone: String!
     password: String!
     brief: String!
-    role_type: Role
+    role: Role
   }
 
   type Role {
     id: String!
     name: String!
-    permission: [Int!]!
+    permissions: [Permission!]!
+  }
+
+  type Permission {
+    id: String!
+    name: String!
+    description: String!
   }
 
   type OperationStatus {
@@ -43,8 +49,8 @@ exports.agentAPIDef = apollo_server_1.gql `
   input AgentUpdate {
     id: String!
     username: String!
-    first_name: String!
-    last_name: String!
+    firstname: String!
+    lastname: String!
     email: String!
     avatar: String!
     phone: String!
@@ -55,8 +61,8 @@ exports.agentAPIDef = apollo_server_1.gql `
 
   input AddAgent {
     username: String!
-    first_name: String!
-    last_name: String!
+    firstname: String!
+    lastname: String!
     email: String!
     avatar: String!
     phone: String!
