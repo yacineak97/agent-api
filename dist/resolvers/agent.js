@@ -16,7 +16,7 @@ exports.resolvers = {
         agents: (_, args) => __awaiter(void 0, void 0, void 0, function* () {
             const { accountID } = args;
             const agents = [];
-            const results = yield postgresql_1.postgresPool.query(`SELECT * FROM agents WHERE account_id=${accountID}`);
+            const results = yield postgresql_1.postgresPool.query(`SELECT * FROM agents WHERE account_id=$1`, [accountID]);
             const roles = new Map();
             for (const agent of results.rows) {
                 try {
@@ -70,7 +70,10 @@ exports.resolvers = {
         }),
         agent: (_, args) => __awaiter(void 0, void 0, void 0, function* () {
             const { accountID, agentID } = args;
-            const agentResult = yield postgresql_1.postgresPool.query(`SELECT * FROM agents WHERE (account_id=${accountID} AND id=${agentID})`);
+            const agentResult = yield postgresql_1.postgresPool.query(`SELECT * FROM agents WHERE (account_id=$1 AND id=$2)`, [
+                accountID,
+                agentID
+            ]);
             if (agentResult.rowCount === 1) {
                 const agent = agentResult.rows[0];
                 const roleResult = yield postgresql_1.postgresPool.query("SELECT * FROM roles WHERE (id=$1)", [agent.role,]);
@@ -118,7 +121,8 @@ exports.resolvers = {
         // Agents
         deleteAgent: (_, args) => __awaiter(void 0, void 0, void 0, function* () {
             const { accountID, agentID } = args;
-            const deleteResult = yield postgresql_1.postgresPool.query(`DELETE FROM agents WHERE (account_id=${accountID} AND id=$1)`, [
+            const deleteResult = yield postgresql_1.postgresPool.query(`DELETE FROM agents WHERE (account_id=$1 AND id=$2)`, [
+                accountID,
                 agentID,
             ]);
             if (deleteResult.rowCount > 0) {
@@ -138,7 +142,10 @@ exports.resolvers = {
             const faildItems = [];
             for (const id of agentsID) {
                 try {
-                    const deleteResult = yield postgresql_1.postgresPool.query(`DELETE FROM agents WHERE (account_id=${accountID} AND id=$1)`, [id]);
+                    const deleteResult = yield postgresql_1.postgresPool.query(`DELETE FROM agents WHERE (account_id=$1 AND id=$2)`, [
+                        accountID,
+                        id
+                    ]);
                     if (deleteResult.rowCount === 0) {
                         faildItems.push(id);
                     }
@@ -184,7 +191,7 @@ exports.resolvers = {
       BEGIN;
       /* Update the agent */
       UPDATE agents SET username=$1 first_name=$2 
-      last_name=$3 email=$4 avatar=$5 phone=$6 password=$7 brief=$8 role=$9
+      last_name=$3 email=$4 avatar=$5 phone=$6 brief=$7 password=$8 role=$9
       WHERE (account_id=$10 AND id=$11)      
       
       COMMIT;`, [username, firstname, lastname, email, avatar, phone, brief, password, roleID, accountID, id]);

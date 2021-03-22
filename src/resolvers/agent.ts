@@ -11,7 +11,7 @@ export const resolvers = {
     agents: async (_: any, args: { accountID: string }): Promise<Agent[]> => {
       const { accountID } = args;
       const agents: Array<Agent> = [];
-      const results = await postgresPool.query(`SELECT * FROM agents WHERE account_id=${accountID}`);
+      const results = await postgresPool.query(`SELECT * FROM agents WHERE account_id=$1`, [accountID]);
       const roles = new Map<string, Role>();
 
       for (const agent of results.rows) {
@@ -77,7 +77,10 @@ export const resolvers = {
 
       const { accountID, agentID } = args;
       const agentResult = await postgresPool.query(
-        `SELECT * FROM agents WHERE (account_id=${accountID} AND id=${agentID})`
+        `SELECT * FROM agents WHERE (account_id=$1 AND id=$2)`, [
+          accountID,
+          agentID
+        ]
       );
 
       if (agentResult.rowCount === 1) {
@@ -137,7 +140,8 @@ export const resolvers = {
     deleteAgent: async (_: any, args: { accountID: string; agentID: string }): Promise<OperationStatus> => {
       const { accountID, agentID } = args;
 
-      const deleteResult = await postgresPool.query(`DELETE FROM agents WHERE (account_id=${accountID} AND id=$1)`, [
+      const deleteResult = await postgresPool.query(`DELETE FROM agents WHERE (account_id=$1 AND id=$2)`, [
+        accountID,
         agentID,
       ]);
 
@@ -160,8 +164,10 @@ export const resolvers = {
       for (const id of agentsID) {
         try {
           const deleteResult = await postgresPool.query(
-            `DELETE FROM agents WHERE (account_id=${accountID} AND id=$1)`,
-            [id]
+            `DELETE FROM agents WHERE (account_id=$1 AND id=$2)`,[
+              accountID,
+              id
+            ]
           );
           if (deleteResult.rowCount === 0) {
             faildItems.push(id);
@@ -221,7 +227,7 @@ export const resolvers = {
       BEGIN;
       /* Update the agent */
       UPDATE agents SET username=$1 first_name=$2 
-      last_name=$3 email=$4 avatar=$5 phone=$6 password=$7 brief=$8 role=$9
+      last_name=$3 email=$4 avatar=$5 phone=$6 brief=$7 password=$8 role=$9
       WHERE (account_id=$10 AND id=$11)      
       
       COMMIT;`,

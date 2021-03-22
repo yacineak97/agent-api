@@ -54,8 +54,8 @@ exports.agentAPIDef = apollo_server_1.gql `
     email: String!
     avatar: String!
     phone: String!
-    password: String!
     brief: String!
+    password: String!
     roleID: String!
   }
 

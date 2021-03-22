@@ -52,8 +52,8 @@ export const agentAPIDef = gql`
     email: String!
     avatar: String!
     phone: String!
-    password: String!
     brief: String!
+    password: String!
     roleID: String!
   }
 
