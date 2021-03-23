@@ -2,13 +2,10 @@ import { postgresPool } from "@database/postgresql";
 import { Agent } from "@interfaces/Agent";
 import { AgentAdd } from "@interfaces/AgentToAdd";
 import { agent as ag } from "@resolvers/queries/agent";
-const bcrypt = require('bcrypt');
 
 export const addAgent = async (_: any, args: { accountID: string; agent: AgentAdd }): Promise<Agent> => {
     const { accountID, agent } = args;
     const { username, firstname, lastname, email, avatar, phone, brief , password, roleID } = agent
-    const salt = await bcrypt.genSalt(10);
-    const passwordEncrypted = await bcrypt.hash(password, salt)
     const addResult = await postgresPool.query(
       `
     INSERT INTO agents(username, first_name, last_name, email, 
@@ -23,7 +20,7 @@ export const addAgent = async (_: any, args: { accountID: string; agent: AgentAd
         avatar,
         phone,
         brief || "N/A",
-        passwordEncrypted,
+        password,
         roleID,
         accountID,
       ]
