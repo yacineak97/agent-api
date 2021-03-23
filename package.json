@@ -9,12 +9,22 @@
     "dev": "concurrently -k -n \"Typescript,Node\" -p \"[{name}]\" -c \"blue,green\" \"tsc --watch\" \"nodemon dist/index.js\"",
     "start": "tsc && node dist/index.js"
   },
+  "_moduleAliases": {
+    "@root": "dist",
+    "@interfaces": "dist/src/interfaces",
+    "@graphDefinition": "dist/src/typedefs",
+    "@resolvers": "dist/src/resolvers",
+    "@database": "dist/src/database",
+    "@utils": "dist/src/utils"
+  },
   "dependencies": {
     "@types/node": "^14.14.35",
     "@types/pg": "^7.14.11",
     "apollo-server": "^2.21.2",
+    "bcrypt": "^5.0.1",
     "concurrently": "^6.0.0",
     "graphql": "^15.5.0",
+    "module-alias": "^2.2.2",
     "nodemon": "^2.0.7",
     "pg": "^8.5.1",
     "typescript": "^4.2.3"

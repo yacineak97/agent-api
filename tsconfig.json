@@ -1,16 +1,29 @@
 {
   "compilerOptions": {
-      "target": "ES6",
-      "module": "commonjs",
-      "allowJs": true,
-      "strict": true,
-      "isolatedModules": false,
-      "esModuleInterop": true,
-      "outDir": "dist"
+    "target": "ES2016",
+    "module": "commonjs",
+    "allowJs": true,
+    "strict": true,
+    "isolatedModules": false,
+    "esModuleInterop": true,
+    "outDir": "./dist",
+    "watch": true,
+    "sourceMap": true,
+    "moduleResolution": "node",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "baseUrl": "./src",
+    "rootDir": ".",
+    "paths": {
+      "@root/*": ["."],
+      "@interfaces/*": ["interfaces/*"],
+      "@graphDefinition/*": ["typedefs/*"],
+      "@resolvers/*": ["resolvers/*"],
+      "@database/*": ["database/*"],
+      "@utils/*": ["utils/*"]
+    }
   },
-  "exclude": [
-      "node_modules"
-  ],
+  "exclude": ["node_modules"],
   "compileOnSave": true,
-  "include": ["src", "index.js"],
+  "include": ["src", "index.ts"]
 }

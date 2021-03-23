@@ -2,11 +2,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 require("module-alias/register");
 const apollo_server_1 = require("apollo-server");
-const index_1 = require("@graphDefinition/index");
-const index_2 = require("@resolvers/index");
+const typeDefs_1 = require("./typeDefs");
+const agent_1 = require("./resolvers/agent");
 const server = new apollo_server_1.ApolloServer({
-    resolvers: index_2.resolvers,
-    typeDefs: index_1.agentAPIDef,
+    resolvers: agent_1.resolvers,
+    typeDefs: typeDefs_1.agentAPIDef,
 });
 server
     .listen({
