@@ -15,8 +15,8 @@ const getAgent_1 = require("@utils/getAgent");
 const getPermission_1 = require("@utils/getPermission");
 const getRole_1 = require("@utils/getRole");
 const agent = (_, args) => __awaiter(void 0, void 0, void 0, function* () {
-    const { accountID, agentID } = args;
-    const agentResult = yield getAgent_1.getAgent(accountID, agentID, postgresql_1.postgresPool);
+    const { agentID } = args;
+    const agentResult = yield getAgent_1.getAgent(agentID, postgresql_1.postgresPool);
     if (agentResult.rowCount === 1) {
         const agent = agentResult.rows[0];
         const roleResult = yield getRole_1.getRole(agent.role, postgresql_1.postgresPool);

@@ -6,10 +6,9 @@ import { getPermission } from "@utils/getPermission";
 import { getRole } from "@utils/getRole";
 
 
-export const agents = async (_: any, args: { accountID: string }): Promise<Agent[]> => {
-    const { accountID } = args;
+export const agents = async (_: any): Promise<Agent[]> => {
     const agents: Array<Agent> = [];
-    const results = await postgresPool.query(`SELECT * FROM agents WHERE account_id=$1`, [accountID]);
+    const results = await postgresPool.query(`SELECT * FROM agents`);
     const roles = new Map<string, Role>();
 
     for (const agent of results.rows) {

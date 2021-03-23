@@ -13,10 +13,9 @@ exports.agents = void 0;
 const postgresql_1 = require("@database/postgresql");
 const getPermission_1 = require("@utils/getPermission");
 const getRole_1 = require("@utils/getRole");
-const agents = (_, args) => __awaiter(void 0, void 0, void 0, function* () {
-    const { accountID } = args;
+const agents = (_) => __awaiter(void 0, void 0, void 0, function* () {
     const agents = [];
-    const results = yield postgresql_1.postgresPool.query(`SELECT * FROM agents WHERE account_id=$1`, [accountID]);
+    const results = yield postgresql_1.postgresPool.query(`SELECT * FROM agents`);
     const roles = new Map();
     for (const agent of results.rows) {
         try {

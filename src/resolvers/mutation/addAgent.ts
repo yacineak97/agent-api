@@ -27,5 +27,5 @@ export const addAgent = async (_: any, args: { accountID: string; agent: AgentAd
     );
     const agentID = addResult.rows[0].id;
 
-    return (await ag(null, { agentID, accountID })) as Agent;
+    return (await ag(null, { agentID })) as Agent;
 }

@@ -12,12 +12,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.addAgent = void 0;
 const postgresql_1 = require("@database/postgresql");
 const agent_1 = require("@resolvers/queries/agent");
-const bcrypt = require('bcrypt');
 const addAgent = (_, args) => __awaiter(void 0, void 0, void 0, function* () {
     const { accountID, agent } = args;
     const { username, firstname, lastname, email, avatar, phone, brief, password, roleID } = agent;
-    const saltRounds = yield bcrypt.genSalt(10);
-    const passwordEncrypted = yield bcrypt.hash(password, saltRounds);
     const addResult = yield postgresql_1.postgresPool.query(`
     INSERT INTO agents(username, first_name, last_name, email, 
       avatar, phone, brief, password, role, account_id) 
@@ -30,12 +27,12 @@ const addAgent = (_, args) => __awaiter(void 0, void 0, void 0, function* () {
         avatar,
         phone,
         brief || "N/A",
-        passwordEncrypted,
+        password,
         roleID,
         accountID,
     ]);
     const agentID = addResult.rows[0].id;
-    return (yield agent_1.agent(null, { agentID, accountID }));
+    return (yield agent_1.agent(null, { agentID }));
 });
 exports.addAgent = addAgent;
 //# sourceMappingURL=addAgent.js.map

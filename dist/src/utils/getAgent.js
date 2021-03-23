@@ -10,9 +10,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getAgent = void 0;
-const getAgent = (accountID, agentID, postgresPool) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield postgresPool.query(`SELECT * FROM agents WHERE (account_id=$1 AND id=$2)`, [
-        accountID,
+const getAgent = (agentID, postgresPool) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield postgresPool.query(`SELECT * FROM agents WHERE id=$1`, [
         agentID,
     ]);
     return result;

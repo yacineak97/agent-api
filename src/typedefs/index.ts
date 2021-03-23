@@ -2,12 +2,11 @@ import { gql } from "apollo-server";
 
 export const agentAPIDef = gql`
   type Query {
-    agents(accountID: String!): [Agent!]!
-    agent(accountID: String!, agentID: String!): Agent
+    agents: [Agent!]!
+    agent(agentID: String!): Agent
   }
 
   type Mutation {
-    # Agents mutations
     deleteAgent(accountID: String!, agentID: String!): OperationStatus!
     deleteAgents(accountID: String!, agentsID: [String!]!): OperationStatus!
     alterAgent(accountID: String!, agent: AgentUpdate!): OperationStatus!

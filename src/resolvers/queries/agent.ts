@@ -5,10 +5,10 @@ import { getAgent } from "@utils/getAgent";
 import { getPermission } from "@utils/getPermission";
 import { getRole } from "@utils/getRole";
 
-export const agent = async (_: any, args: { agentID: string; accountID: string }): Promise<Agent | void> => {
+export const agent = async (_: any, args: { agentID: string }): Promise<Agent | void> => {
 
-    const { accountID, agentID } = args;
-    const agentResult = await getAgent(accountID, agentID, postgresPool);
+    const { agentID } = args;
+    const agentResult = await getAgent(agentID, postgresPool);
 
     if (agentResult.rowCount === 1) {
       const agent = agentResult.rows[0];
