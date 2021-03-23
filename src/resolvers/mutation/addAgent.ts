@@ -7,8 +7,8 @@ const bcrypt = require('bcrypt');
 export const addAgent = async (_: any, args: { accountID: string; agent: AgentAdd }): Promise<Agent> => {
     const { accountID, agent } = args;
     const { username, firstname, lastname, email, avatar, phone, brief , password, roleID } = agent
-    const saltRounds = await bcrypt.genSalt(10);
-    const passwordEncrypted = await bcrypt.hash(password, saltRounds)
+    const salt = await bcrypt.genSalt(10);
+    const passwordEncrypted = await bcrypt.hash(password, salt)
     const addResult = await postgresPool.query(
       `
     INSERT INTO agents(username, first_name, last_name, email, 
